@@ -1,3 +1,6 @@
+# Project specific configuration
+app_config.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -60,3 +63,6 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# IDE
+.idea/

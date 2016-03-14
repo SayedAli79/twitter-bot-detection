@@ -1,17 +1,17 @@
-import tweepy
-import json
-import unicodedata
-import sqlite3
-
 import app_config
-import definitions
+from libraries.twitterclient import TwitterClient
 
-API_launch()
 
-followers_list(followers_name[1])
+# Twitter API configuration
+consumer_key = app_config.twitter["consumer_key"]
+consumer_secret = app_config.twitter["consumer_secret"]
 
-create_db()
+access_token = app_config.twitter["access_token"]
+access_token_secret = app_config.twitter["access_token_secret"]
 
-create_table()
+api = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
 
-tweet_info(followers_name[1],tweets_number=100)
+
+
+
+

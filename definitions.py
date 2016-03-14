@@ -1,33 +1,3 @@
-
-def API_launch():
-    
-    global app_config
-    global tweepy
-
-# Twitter API configuration
-    consumer_key = app_config.twitter["consumer_key"]
-    consumer_secret = app_config.twitter["consumer_secret"]
-
-    access_token = app_config.twitter["access_token"]
-    access_token_secret = app_config.twitter["access_token_secret"]
-
-# Start
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-
-    api = tweepy.API(auth)
-    return api
-
-def followers_list(number_followers=200):
-
-    global api
-    followers = api.followers(count=number_followers)
-
-    followers_name = []
-    for follower in followers:
-        followers_name.append(str(follower.screen_name))
-        return followers_name
-
 def create_db(database_name='bot_detection.db'):
 
     global sqlite3

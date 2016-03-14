@@ -19,9 +19,8 @@ class TwitterClient(object):
             
         self.followers_name = followers_name 
 
-
+    @staticmethod
     def feed_table(tweet_id ,followers_name,tweet_date ,tweet_text,tweet_mentions,database_name='bot_detection.db'):
-
         conn = sqlite3.connect(database_name)
         conn.execute("INSERT INTO TWEETS (ID,NAME,DATE,TEXT,MENTIONS) VALUES (?,?,?,?,?)"
                  ,(tweet_id ,followers_name,tweet_date ,tweet_text,tweet_mentions))
@@ -29,9 +28,7 @@ class TwitterClient(object):
         conn.commit()
         conn.close()
 
-    def tweet_info(follower,tweets_number=100):
-
-
+    def tweet_info(self, follower,tweets_number=100):
         user_info = self.api.user_timeline(screen_name = follower,count = tweets_number)
 
         tweet = {}
@@ -53,7 +50,7 @@ class TwitterClient(object):
         date_string = unicodedata.normalize('NFKD', date).encode('ascii','ignore')
         name_mentions_string = unicodedata.normalize('NFKD', name_mentions).encode('ascii','ignore')
 
-        feed_table(ID_string,
+        TwitterClient.feed_table(ID_string,
             name_string,
             text_string,
             date_string,

@@ -1,19 +1,17 @@
 import tweepy
+import json
+import unicodedata
+import sqlite3
+
 import app_config
+import definitions
 
-# Twitter API configuration
-consumer_key = app_config.twitter["consumer_key"]
-consumer_secret = app_config.twitter["consumer_secret"]
+API_launch()
 
-access_token = app_config.twitter["access_token"]
-access_token_secret = app_config.twitter["access_token_secret"]
+followers_list(followers_name[1])
 
-# Start
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
+create_db()
 
-api = tweepy.API(auth)
+create_table()
 
-followers = api.followers(count=200)
-for follower in followers:
-    print follower.screen_name
+tweet_info(followers_name[1],tweets_number=100)

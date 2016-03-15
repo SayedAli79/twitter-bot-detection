@@ -11,7 +11,7 @@ access_token = app_config.twitter["access_token"]
 access_token_secret = app_config.twitter["access_token_secret"]
 
 # Start
-database = DataBase("bot_detection")
+database = DataBase("bot_detection.db")
 database.create_table()
 
 client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)

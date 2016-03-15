@@ -5,8 +5,8 @@ class DataBase(object):
     def __init__(self, database_name):
         self.database_name = database_name
 
-    def create_db(database_name='bot_detection.db'):
-        conn = sqlite3.connect(database_name)
+    def create_db(self):
+        conn = sqlite3.connect(self.database_name)
 
     def create_table(self):
         conn = sqlite3.connect(self.database_name)

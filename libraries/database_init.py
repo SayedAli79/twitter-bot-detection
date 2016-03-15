@@ -8,14 +8,15 @@ class DataBase(object):
     def create_db(self):
         conn = sqlite3.connect(self.database_name)
 
-    def create_table(self):
+    def create_table(self): 
         conn = sqlite3.connect(self.database_name)
-        conn.execute('''CREATE TABLE TWEETS
-       (ID INT PRIMARY KEY      NOT NULL,
-       NAME            TEXT     NOT NULL,
-       DATE            TEXT     NOT NULL,
-       TEXT            TEXT     NOT NULL,
-       MENTIONS        TEXT     NOT NULL);''')
+        conn.execute('''DROP TABLE {tn} IF EXISTS;'''.format(tn=self.table_name))
+        conn.execute('''CREATE TABLE {tn}
+           (ID INT PRIMARY KEY      NOT NULL,
+           NAME            TEXT     NOT NULL,
+           DATE            TEXT     NOT NULL,
+           TEXT            TEXT     NOT NULL,
+           MENTIONS        TEXT     NOT NULL);'''.format(tn=self.table_name))
         conn.close()
 
     def feed_table(self, tweet_id, followers_name, tweet_date, tweet_text, tweet_mentions):

@@ -1,5 +1,6 @@
 # Project specific configuration
 app_config.py
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

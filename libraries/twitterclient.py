@@ -1,7 +1,4 @@
 import tweepy
-import json
-import unicodedata
-import sqlite3
 
 class TwitterClient(object):
     def __init__(self, consumer_key, consumer_secret, access_token, access_token_secret):
@@ -10,12 +7,15 @@ class TwitterClient(object):
 
         self.api = tweepy.API(auth)
 
-    def followers_list(self, number_followers=5):
-        followers =  self.api.followers(count=number_followers)
+    def followers_list(self, screen_name, count=5):
+        followers =  self.api.followers(screen_name=screen_name, count=count)
 
         followers_name = []
         for follower in followers:
             followers_name.append(str(follower.screen_name))
             
-        self.followers_name = followers_name 
+        return followers_name
 
+
+    def user_timeline(self, screen_name, count=10):
+        return self.api.user_timeline(screen_name = screen_name, count = count)

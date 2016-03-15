@@ -10,11 +10,7 @@ class TwitterClient(object):
     def followers_list(self, screen_name, count=5):
         followers =  self.api.followers(screen_name=screen_name, count=count)
 
-        followers_name = []
-        for follower in followers:
-            followers_name.append(str(follower.screen_name))
-            
-        return followers_name
+        return [ follower.screen_name for follower in followers if follower.protected == False]
 
 
     def user_timeline(self, screen_name, count=10):

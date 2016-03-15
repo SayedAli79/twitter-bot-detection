@@ -6,12 +6,14 @@ class TweetImporter(object):
         self.database = database
 
     def importData(self, user, tweets_number=10):
-        followers = self.twitter_client.followers_list(screen_name=user, count=1)
+        followers = self.twitter_client.followers_list(screen_name=user, count=10)
 
+        id = 0
         for j, follower in enumerate(followers):
             tweets = self.twitter_client.user_timeline(screen_name=follower, count=tweets_number)
             mentions_list = []
             for i, status in enumerate(tweets):
+                id += 1
                 tweet = status._json
                 text = tweet['text']
                 date = tweet['created_at']
@@ -22,13 +24,13 @@ class TweetImporter(object):
                     for mention in user_mentions:
                         mentions_list.append(mention['screen_name'])
 
-                id_string = str(i)+"_"+str(j)
                 text_string = unicodedata.normalize('NFKD', text).encode('ascii','ignore')
                 date_string = unicodedata.normalize('NFKD', date).encode('ascii','ignore')
                 name_mentions_string = ",".join(mentions_list)
 
-                self.database.feed_table(id_string,
-                    user,
+                self.database.feed_table(
+                    id,
+                    follower,
                     text_string,
                     date_string,
                     name_mentions_string)

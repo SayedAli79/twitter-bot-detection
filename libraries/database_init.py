@@ -9,34 +9,26 @@ class DataBase(object):
         conn = sqlite3.connect(self.database_name)
 
     def create_table(self): 
-        import sqlite3
         conn = sqlite3.connect(self.database_name)
         query = "SELECT * FROM {tn}".format(tn=self.tablename)
-        conn = conn.cursor()
         conn.execute(query)
         result = conn.fetchone()
-        conn.close()
         if result:
-            conn = sqlite3.connect(self.database_name)
-            conn.execute('''DROP TABLE {tn};'''.format(tn=self.table_name))
-            conn.close()
-            conn = sqlite3.connect(self.database_name)
+            conn.execute('''DROP TABLE {tn} IF EXISTS;'''.format(tn=self.table_name))
             conn.execute('''CREATE TABLE {tn}
            (ID INT PRIMARY KEY      NOT NULL,
            NAME            TEXT     NOT NULL,
            DATE            TEXT     NOT NULL,
            TEXT            TEXT     NOT NULL,
            MENTIONS        TEXT     NOT NULL);'''.format(tn=self.table_name))
-            conn.close()
         else:
-            conn = sqlite3.connect(database_name)
             conn.execute('''CREATE TABLE {tn}
        (ID INT PRIMARY KEY      NOT NULL,
        NAME            TEXT     NOT NULL,
        DATE            TEXT     NOT NULL,
        TEXT            TEXT     NOT NULL,
        MENTIONS        TEXT     NOT NULL);'''.format(tn=table_name))
-            conn.close()
+       conn.close()
 
     def feed_table(self, tweet_id, followers_name, tweet_date, tweet_text, tweet_mentions):
         conn = sqlite3.connect(self.database_name)

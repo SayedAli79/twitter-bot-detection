@@ -22,12 +22,12 @@ class TweetImporter(object):
                     for mention in user_mentions:
                         mentions_list.append(mention['screen_name'])
 
-                id_string = str(i)+"_"+str(j)
+                
                 text_string = unicodedata.normalize('NFKD', text).encode('ascii','ignore')
                 date_string = unicodedata.normalize('NFKD', date).encode('ascii','ignore')
                 name_mentions_string = ",".join(mentions_list)
 
-                self.database.feed_table(id_string,
+                self.database.feed_table(
                     user,
                     text_string,
                     date_string,

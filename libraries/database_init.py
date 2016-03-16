@@ -4,6 +4,7 @@ import sqlite3
 class DataBase(object):
     def __init__(self, database_name):
         self.database_name = database_name
+        self.table_name = table_name
 
     def create_db(self):
         conn = sqlite3.connect(self.database_name)

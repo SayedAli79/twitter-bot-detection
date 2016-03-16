@@ -1,6 +1,5 @@
 import sqlite3
 
-
 class DataBase(object):
     def __init__(self, database_name,table_name):
         self.database_name = database_name
@@ -21,7 +20,7 @@ class DataBase(object):
 
     def feed_table(self, followers_name, tweet_date, tweet_text, tweet_mentions):
         conn = sqlite3.connect(self.database_name)
-        conn.execute("INSERT INTO TWEETS (NAME,DATE,TEXT,MENTIONS) VALUES (?,?,?,?)",
+        conn.execute("INSERT INTO {tn} (NAME,DATE,TEXT,MENTIONS) VALUES (?,?,?,?)".format(tn=self.table_name),
                      (followers_name, tweet_date, tweet_text, tweet_mentions))
 
         conn.commit()

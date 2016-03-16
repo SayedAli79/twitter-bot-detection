@@ -11,7 +11,7 @@ class DataBase(object):
 
     def create_table(self): 
         conn = sqlite3.connect(self.database_name)
-        conn.execute('''DROP TABLE {tn} IF EXISTS;'''.format(tn=self.table_name))
+        conn.execute('''DROP TABLE IF EXISTS {tn};'''.format(tn=self.table_name))
         conn.execute('''CREATE TABLE {tn}
            (NAME            TEXT     NOT NULL,
            DATE            TEXT     NOT NULL,

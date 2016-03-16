@@ -6,7 +6,7 @@ class TweetImporter(object):
         self.database = database
 
     def importData(self, user, tweets_number=10):
-        followers = self.twitter_client.followers_list(screen_name=user, count=10)
+        followers = self.twitter_client.followers_list(screen_name=user)
 
         id = 0
         for j, follower in enumerate(followers):

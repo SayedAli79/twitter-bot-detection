@@ -11,7 +11,6 @@ class TweetImporter(object):
         id = 0
         for j, follower in enumerate(followers):
             tweets = self.twitter_client.user_timeline(screen_name=follower, count=tweets_number)
-            mentions_list = []
             for i, status in enumerate(tweets):
                 id += 1
                 tweet = status._json
@@ -19,6 +18,7 @@ class TweetImporter(object):
                 date = tweet['created_at']
                 entities = tweet['entities']
                 user_mentions = entities['user_mentions']
+                mentions_list = []
 
                 if len(user_mentions) > 0:
                     for mention in user_mentions:

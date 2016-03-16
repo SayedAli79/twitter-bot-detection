@@ -1,17 +1,22 @@
-import tweepy
-import json
-import unicodedata
-import sqlite3
-
 import app_config
-import definitions
+from libraries.twitterclient import TwitterClient
+from libraries.database_init import DataBase
+from libraries.tweetimporter import TweetImporter
 
-API_launch()
+# Twitter API configuration
+consumer_key = app_config.twitter["consumer_key"]
+consumer_secret = app_config.twitter["consumer_secret"]
 
-followers_list(followers_name[1])
+access_token = app_config.twitter["access_token"]
+access_token_secret = app_config.twitter["access_token_secret"]
 
-create_db()
+# Start
+database = DataBase("bot_detection.db","TWEETS")
 
-create_table()
+client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
 
-tweet_info(followers_name[1],tweets_number=100)
+importer = TweetImporter(client, database)
+importer.importData("FranckBrignoli")
+
+
+

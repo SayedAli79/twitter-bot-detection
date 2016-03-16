@@ -18,7 +18,7 @@ class DataBase(object):
            MENTIONS        TEXT     NOT NULL);'''.format(tn=self.table_name))
         conn.close()
 
-    def feed_table(self, tweet_id, followers_name, tweet_date, tweet_text, tweet_mentions):
+    def feed_table(self, followers_name, tweet_date, tweet_text, tweet_mentions):
         conn = sqlite3.connect(self.database_name)
         conn.execute("INSERT INTO TWEETS (rowid,NAME,DATE,TEXT,MENTIONS) VALUES (?,?,?,?,?)",
                      (NULL, followers_name, tweet_date, tweet_text, tweet_mentions))

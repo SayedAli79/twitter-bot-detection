@@ -29,7 +29,6 @@ class TweetImporter(object):
                 name_mentions_string = ",".join(mentions_list)
 
                 self.database.feed_table(
-                    id,
                     follower,
                     text_string,
                     date_string,

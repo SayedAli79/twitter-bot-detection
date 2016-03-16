@@ -21,8 +21,8 @@ class DataBase(object):
 
     def feed_table(self, followers_name, tweet_date, tweet_text, tweet_mentions):
         conn = sqlite3.connect(self.database_name)
-        conn.execute("INSERT INTO TWEETS (rowid,NAME,DATE,TEXT,MENTIONS) VALUES (?,?,?,?,?)",
-                     (NULL, followers_name, tweet_date, tweet_text, tweet_mentions))
+        conn.execute("INSERT INTO TWEETS (NAME,DATE,TEXT,MENTIONS) VALUES (?,?,?,?)",
+                     (followers_name, tweet_date, tweet_text, tweet_mentions))
 
         conn.commit()
         conn.close()

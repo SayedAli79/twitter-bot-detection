@@ -1,6 +1,13 @@
 # Project specific configuration
+images/*
 app_config.py
 *.db
+
+# Virtual envs
+venv/
+
+# Mac
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

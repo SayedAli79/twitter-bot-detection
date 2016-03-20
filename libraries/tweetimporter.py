@@ -6,13 +6,11 @@ class TweetImporter(object):
         self.database = database
 
     def importData(self, user, tweets_number=10):
-        followers = self.twitter_client.followers_list(screen_name=user)
+        followers = self.twitter_client.followers_list(screen_name=user, count=200)
 
-        id = 0
         for j, follower in enumerate(followers):
             tweets = self.twitter_client.user_timeline(screen_name=follower, count=tweets_number)
             for i, status in enumerate(tweets):
-                id += 1
                 tweet = status._json
                 text = tweet['text']
                 date = tweet['created_at']

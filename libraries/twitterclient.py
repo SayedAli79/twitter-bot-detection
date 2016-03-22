@@ -5,9 +5,8 @@ class TwitterClient(object):
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_token_secret)
 
-        self.api = tweepy.API(auth_handler=auth)
+        self.api = tweepy.API(auth_handler=auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-    #TODO: use count
     def followers_list(self, screen_name, count=5):
         followers =  tweepy.Cursor(self.api.followers, screen_name=screen_name).items()
 

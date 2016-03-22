@@ -5,10 +5,11 @@ class TwitterClient(object):
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_token_secret)
 
-        self.api = tweepy.API(auth)
+        self.api = tweepy.API(auth_handler=auth)
 
+    #TODO: use count
     def followers_list(self, screen_name, count=5):
-        followers =  self.api.followers(screen_name=screen_name, count=count)
+        followers =  tweepy.Cursor(self.api.followers, screen_name=screen_name).items()
 
         return [ follower.screen_name for follower in followers if follower.protected == False]
 

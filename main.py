@@ -1,4 +1,5 @@
 import os
+import argparse
 
 from config import app_config as cfg
 
@@ -20,8 +21,12 @@ database.create_table()
 
 client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
 
+parser = argparse.ArgumentParser(description='parser with non-optional arguments')
+parser.add_argument('specified_user', action="store")
+
+arg_results = parser.parse_args()
 importer = TweetImporter(client, database)
-importer.importData("FranckBrignoli", 200)
+importer.importData(arg_results.specified_user, 200)
 
 # dir = os.path.dirname(os.path.abspath(__file__))
 # out = "{}/images".format(dir)

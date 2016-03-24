@@ -7,9 +7,6 @@ class DataBase(object):
         self.database_name = database_name
         self.table_name = table_name
 
-    def create_db(self):
-        conn = sqlite3.connect(self.database_name)
-
     def create_table(self): 
         conn = sqlite3.connect(self.database_name)
         conn.execute('''DROP TABLE IF EXISTS {tn};'''.format(tn=self.table_name))

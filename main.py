@@ -17,6 +17,7 @@ access_token_secret = cfg.twitter["access_token_secret"]
 parser = argparse.ArgumentParser(description='provide additional information to run the bot detection')
 parser.add_argument('specified_user', action="store", help='load tweets from the specified user')
 parser.add_argument('--followers', action="store_true", help="load tweets from user's followers")
+parser.add_argument('--create-db', action="store_true", help='create or drop the database if it already exists')
 
 args = parser.parse_args()
 
@@ -25,7 +26,8 @@ database = DataBase(cfg.database["name"], cfg.database["tweet_table"])
 client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
 importer = TweetImporter(client, database)
 
-database.create_table()
+if args.create_db:
+    database.create_table()
 
 importer.fromUser(args.specified_user, 20)
 if args.followers:

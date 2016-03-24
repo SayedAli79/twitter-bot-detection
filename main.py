@@ -21,8 +21,8 @@ database.create_table()
 
 client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
 
-parser = argparse.ArgumentParser(description='parser with non-optional arguments')
-parser.add_argument('specified_user', action="store")
+parser = argparse.ArgumentParser(description='provide additional information to run the bot detection')
+parser.add_argument('specified_user', action="store",help='specify the twitter user to investigate')
 
 arg_results = parser.parse_args()
 importer = TweetImporter(client, database)

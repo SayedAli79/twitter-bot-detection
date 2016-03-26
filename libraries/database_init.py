@@ -26,10 +26,13 @@ class DataBase(object):
         conn.commit()
         conn.close()
 
-    #TODO: cleanup
-    def avg_mentions_per_user(self):
+    def avg_mentions_per_user(self, is_bot=False):
         conn = sqlite3.connect(self.database_name)
-        res = conn.execute("SELECT NAME, MENTIONS FROM {tn}".format(tn=self.table_name))
+        res = conn.execute("""
+                SELECT NAME, MENTIONS
+                FROM {tn}
+                WHERE IS_BOT = {is_bot:d}
+            """.format(tn=self.table_name, is_bot=is_bot))
 
         mentions_per_user = defaultdict(lambda: [])
         for (name, mention) in res:

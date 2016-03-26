@@ -5,7 +5,7 @@ class TweetImporter(object):
         self.twitter_client = twitter_client
         self.database = database
 
-    def fromUser(self, user, tweets_number=10):
+    def fromUser(self, user, tweets_number=10, is_bot=False):
         tweets = self.twitter_client.user_timeline(screen_name=user, count=tweets_number)
         for i, status in enumerate(tweets):
             tweet = status._json
@@ -25,8 +25,9 @@ class TweetImporter(object):
 
             self.database.feed_table(
                 user,
-                text_string,
+                is_bot,
                 date_string,
+                text_string,
                 name_mentions_string)
 
     def fromFollowers(self, user, tweets_number=10):

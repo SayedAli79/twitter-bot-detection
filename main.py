@@ -18,18 +18,18 @@ parser = argparse.ArgumentParser(description='provide additional information to 
 parser.add_argument('specified_user', action="store", help='load tweets from the specified user')
 parser.add_argument('--followers', action="store_true", help="load tweets from user's followers")
 parser.add_argument('--create-db', action="store_true", help='create or drop the database if it already exists')
+parser.add_argument('--is-bot', action="store_true", help='the specified user will be flag as bot')
 
 args = parser.parse_args()
 
 # Start
 database = DataBase(cfg.database["name"], cfg.database["tweet_table"])
-client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
-importer = TweetImporter(client, database)
-
 if args.create_db:
     database.create_table()
 
-importer.fromUser(args.specified_user, 20)
-if args.followers:
-    importer.fromFollowers(args.specified_user, 20)
+client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
+importer = TweetImporter(client, database)
+importer.fromUser(args.specified_user, 200, args.is_bot)
 
+if args.followers:
+    importer.fromFollowers(args.specified_user, 200)

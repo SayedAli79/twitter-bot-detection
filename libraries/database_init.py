@@ -12,15 +12,16 @@ class DataBase(object):
         conn.execute('''DROP TABLE IF EXISTS {tn};'''.format(tn=self.table_name))
         conn.execute('''CREATE TABLE {tn}
            (NAME            TEXT     NOT NULL,
+           IS_BOT          INTEGER NOT NULL,
            DATE            TEXT     NOT NULL,
            TEXT            TEXT     NOT NULL,
            MENTIONS        TEXT     NOT NULL);'''.format(tn=self.table_name))
         conn.close()
 
-    def feed_table(self, followers_name, tweet_date, tweet_text, tweet_mentions):
+    def feed_table(self, user, is_bot, tweet_date, tweet_text, tweet_mentions):
         conn = sqlite3.connect(self.database_name)
-        conn.execute("INSERT INTO {tn} (NAME,DATE,TEXT,MENTIONS) VALUES (?,?,?,?)".format(tn=self.table_name),
-                     (followers_name, tweet_date, tweet_text, tweet_mentions))
+        conn.execute("INSERT INTO {tn} (NAME, IS_BOT, DATE,TEXT,MENTIONS) VALUES (?, ?,?,?,?)".format(tn=self.table_name),
+                     (user, is_bot, tweet_date, tweet_text, tweet_mentions))
 
         conn.commit()
         conn.close()

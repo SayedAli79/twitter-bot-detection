@@ -41,10 +41,11 @@ class DataBase(object):
                 count = len(mention.split(","))
             mentions_per_user[name].append(count)
 
-        avg_per_user = {}
-        for (user, mentions) in mentions_per_user.iteritems():
-            avg_per_user[user] = np.mean(mentions)
+        avg_per_user = {user: np.mean(mentions) for (user, mentions) in mentions_per_user.iteritems()}
 
         conn.close()
 
         return avg_per_user
+
+
+

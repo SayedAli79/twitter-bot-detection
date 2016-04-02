@@ -18,3 +18,15 @@ class Graph(object):
         pl.setp(ax, xticks=[1, 2], xticklabels=[ "Humans", "Bots"])
         pl.savefig(path)
 
+
+    def vocabulary(self, vocabulary_users, vocabulary_bots, path):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        ax.yaxis.grid(True)
+        ax.set_ylabel("vocabulary size")
+
+        ax.boxplot([vocabulary_users, vocabulary_bots], vert=True, patch_artist=True)
+
+        pl.setp(ax, xticks=[1, 2], xticklabels=[ "Humans", "Bots"])
+        pl.savefig(path)

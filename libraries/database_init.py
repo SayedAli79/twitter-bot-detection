@@ -26,6 +26,7 @@ class DataBase(object):
         conn.commit()
         conn.close()
 
+
     def avg_mentions_per_user(self, is_bot=False):
         conn = sqlite3.connect(self.database_name)
         res = conn.execute("""
@@ -47,5 +48,24 @@ class DataBase(object):
 
         return avg_per_user
 
+    def vocabulary_size(self, is_bot=False, min_tweets=200):
+        conn = sqlite3.connect(self.database_name)
+        res = conn.execute("""
+                SELECT NAME, TEXT
+                FROM {tn}
+                WHERE IS_BOT = {is_bot:d}
+                AND NAME IN (
+                    SELECT NAME FROM tweets
+                    GROUP BY NAME
+                    HAVING COUNT(*) >= {min_tweets:d}
+                )
+            """.format(tn=self.table_name, is_bot=is_bot, min_tweets=min_tweets))
 
+        words_per_user = defaultdict(lambda: set())
+        for (name, text) in res:
+            for word in text.split(" "):
+                words_per_user[name].add(word)
 
+        conn.close()
+
+        return {name: len(words) for (name, words) in words_per_user.iteritems()}

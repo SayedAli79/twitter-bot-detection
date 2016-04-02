@@ -18,8 +18,13 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 database = DataBase(cfg.database["name"], cfg.database["tweet_table"])
 
 # Average mentions per user
-path ="{}/images/avg_tweets.png".format(current_path)
+path ="{}/images/avg_mentions.png".format(current_path)
 graph = Graph(path)
 avg_mentions_per_user = database.avg_mentions_per_user().values()
 avg_mentions_per_bot = database.avg_mentions_per_user(True).values()
 graph.avg_tweets(avg_mentions_per_user, avg_mentions_per_bot, path)
+
+path ="{}/images/vocabulary.png".format(current_path)
+graph.vocabulary(database.vocabulary_size().values(), database.vocabulary_size(True).values(), path)
+
+

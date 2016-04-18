@@ -1,9 +1,9 @@
 import unicodedata
+from models import Tweet
 
 class TweetImporter(object):
-    def __init__(self, twitter_client, database):
+    def __init__(self, twitter_client):
         self.twitter_client = twitter_client
-        self.database = database
 
     def fromUser(self, user, tweets_number=10, is_bot=False):
         tweets = self.twitter_client.user_timeline(screen_name=user, count=tweets_number)
@@ -23,12 +23,13 @@ class TweetImporter(object):
             date_string = unicodedata.normalize('NFKD', date).encode('ascii','ignore')
             name_mentions_string = ",".join(mentions_list)
 
-            self.database.feed_table(
-                user,
-                is_bot,
-                date_string,
-                text_string,
-                name_mentions_string)
+            Tweet.create(
+                    name = user,
+                    is_bot = is_bot,
+                    text = text_string,
+                    date = date_string,
+                    mentions = name_mentions_string
+            )
 
     def fromFollowers(self, user, tweets_number=10):
         followers = self.twitter_client.followers_list(screen_name=user, count=200)

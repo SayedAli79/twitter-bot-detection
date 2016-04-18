@@ -28,14 +28,14 @@ class Tweet(BaseModel):
 
     @classmethod
     def avg_mentions_per_user(cls, is_bot=False):
-        tweets = Tweet.select().where(Tweet.is_bot == is_bot)
+        tweets = Tweet.select(Tweet).join(User).where(User.is_bot == is_bot)
 
         mentions_per_user = defaultdict(lambda: [])
         for tweet in tweets:
             count = 0
             if len(tweet.mentions) > 0:
                 count = len(tweet.mentions.split(","))
-            mentions_per_user[tweet.name].append(count)
+            mentions_per_user[tweet.user_id].append(count)
 
         avg_per_user = {user: np.mean(mentions) for (user, mentions) in mentions_per_user.iteritems()}
 
@@ -43,18 +43,22 @@ class Tweet(BaseModel):
 
     @classmethod
     def vocabulary_size(cls, is_bot=False, min_tweets=200):
-        selected_users = Tweet.select(Tweet.name).group_by(Tweet.name).having(fn.Count() >= min_tweets)
-        tweets = (Tweet.select()
+        selected_users = Tweet.select(Tweet.user)\
+            .group_by(Tweet.user)\
+            .having(fn.Count() >= min_tweets)
+
+
+        tweets = (Tweet.select(Tweet).join(User)
             .where(
-                (Tweet.is_bot == is_bot) &
-                (Tweet.name << selected_users )
+                (User.is_bot == is_bot) &
+                (User.id << selected_users )
             ))
 
 
         words_per_user = defaultdict(lambda: set())
         for tweet in tweets:
             for word in tweet.text.split(" "):
-                words_per_user[tweet.name].add(word)
+                words_per_user[tweet.user_id].add(word)
 
         return {name: len(words) for (name, words) in words_per_user.iteritems()}
 

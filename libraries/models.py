@@ -7,16 +7,21 @@ db = SqliteDatabase(cfg.database["name"])
 
 def create_database():
     db.connect()
-    db.drop_tables([Tweet])
-    db.create_tables([Tweet])
+    db.drop_tables([User, Tweet], True)
+    db.create_tables([User, Tweet], True)
 
 class BaseModel(Model):
     class Meta:
         database = db
 
-class Tweet(BaseModel):
-    name = CharField()
+class User(BaseModel):
+    screen_name = CharField()
     is_bot = BooleanField()
+    followers = IntegerField()
+    following = IntegerField()
+
+class Tweet(BaseModel):
+    user = ForeignKeyField(User, related_name='tweets')
     text = CharField()
     date = CharField()
     mentions = CharField()
@@ -52,3 +57,4 @@ class Tweet(BaseModel):
                 words_per_user[tweet.name].add(word)
 
         return {name: len(words) for (name, words) in words_per_user.iteritems()}
+

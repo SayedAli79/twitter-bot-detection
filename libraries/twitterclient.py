@@ -12,6 +12,8 @@ class TwitterClient(object):
 
         return [ follower.screen_name for follower in followers if follower.protected == False]
 
-
     def user_timeline(self, screen_name, count=10):
-        return self.api.user_timeline(screen_name = screen_name, count = count)
+        return self.api.user_timeline(screen_name = screen_name, count=count)
+
+    def user_shows(self, screen_name):
+        return self.api.get_user(screen_name)

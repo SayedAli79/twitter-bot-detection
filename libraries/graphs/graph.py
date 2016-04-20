@@ -1,5 +1,4 @@
 import pylab as pl
-import numpy as np
 import matplotlib.pyplot as plt
 
 class Graph(object):

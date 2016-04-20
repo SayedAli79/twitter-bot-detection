@@ -2,9 +2,10 @@ import argparse
 
 from config import app_config as cfg
 
-from libraries.database_init import DataBase
 from libraries.tweetimporter import TweetImporter
 from libraries.twitterclient import TwitterClient
+
+from libraries.models import create_database
 
 # Twitter API configuration
 consumer_key = cfg.twitter["consumer_key"]
@@ -23,12 +24,11 @@ parser.add_argument('--is-bot', action="store_true", help='the specified user wi
 args = parser.parse_args()
 
 # Start
-database = DataBase(cfg.database["name"], cfg.database["tweet_table"])
 if args.create_db:
-    database.create_table()
+    create_database()
 
 client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
-importer = TweetImporter(client, database)
+importer = TweetImporter(client)
 importer.fromUser(args.specified_user, 200, args.is_bot)
 
 if args.followers:

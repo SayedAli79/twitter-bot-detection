@@ -1,12 +1,26 @@
 import unicodedata
-from models import Tweet
+from models import Tweet, User
 
 class TweetImporter(object):
     def __init__(self, twitter_client):
         self.twitter_client = twitter_client
 
-    def fromUser(self, user, tweets_number=10, is_bot=False):
-        tweets = self.twitter_client.user_timeline(screen_name=user, count=tweets_number)
+    def createUser(self, screen_name, is_bot=False):
+        api_user = self.twitter_client.user_shows(screen_name=screen_name)
+
+        user = User.create(
+            screen_name=screen_name,
+            is_bot=is_bot,
+            followers=api_user.followers_count,
+            following=api_user.friends_count
+        )
+
+        return user
+
+    def fromUser(self, screen_name, tweets_number=10, is_bot=False):
+        user = self.createUser(screen_name, is_bot)
+
+        tweets = self.twitter_client.user_timeline(screen_name=screen_name, count=tweets_number)
         for i, status in enumerate(tweets):
             tweet = status._json
             text = tweet['text']
@@ -24,8 +38,7 @@ class TweetImporter(object):
             name_mentions_string = ",".join(mentions_list)
 
             Tweet.create(
-                    name = user,
-                    is_bot = is_bot,
+                    user = user,
                     text = text_string,
                     date = date_string,
                     mentions = name_mentions_string

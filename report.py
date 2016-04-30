@@ -11,7 +11,6 @@ access_token = cfg.twitter["access_token"]
 access_token_secret = cfg.twitter["access_token_secret"]
 
 
-
 # Start
 current_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -28,7 +27,7 @@ graph.vocabulary(Tweet.vocabulary_size().values(), Tweet.vocabulary_size(True).v
 path ="{}/images/followers_following.png".format(current_path)
 graph.ratio_followers_following(
     User.ratio_followers_following_per_users(),
-    User.ratio_followers_following_per_users(),
+    User.ratio_followers_following_per_users(is_bot=True),
     path
 )
 

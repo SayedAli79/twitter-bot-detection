@@ -20,6 +20,18 @@ class User(BaseModel):
     followers = IntegerField()
     following = IntegerField()
 
+    def ratio_followers_following(self):
+        if self.following == 0:
+            return 0
+
+        return self.followers / float(self.following)
+
+    @classmethod
+    def ratio_followers_following_per_users(self, is_bot=False):
+        users = User.select().where(User.is_bot == is_bot)
+
+        return [user.ratio_followers_following() for user in users]
+
 class Tweet(BaseModel):
     user = ForeignKeyField(User, related_name='tweets')
     text = CharField()

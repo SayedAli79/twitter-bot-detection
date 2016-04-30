@@ -1,5 +1,5 @@
 import os
-from libraries.models import Tweet
+from libraries.models import Tweet, User
 from config import app_config as cfg
 from libraries.graphs.graph import Graph
 
@@ -24,5 +24,16 @@ graph.avg_tweets(avg_mentions_per_user, avg_mentions_per_bot, path)
 
 path ="{}/images/vocabulary.png".format(current_path)
 graph.vocabulary(Tweet.vocabulary_size().values(), Tweet.vocabulary_size(True).values(), path)
+
+path ="{}/images/followers_following.png".format(current_path)
+graph.ratio_followers_following(
+    User.ratio_followers_following_per_users(),
+    User.ratio_followers_following_per_users(),
+    path
+)
+
+
+
+
 
 

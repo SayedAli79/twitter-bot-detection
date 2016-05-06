@@ -2,6 +2,7 @@ from peewee import *
 from config import app_config as cfg
 from collections import defaultdict
 import numpy as np
+from itertools import product
 
 db = SqliteDatabase(cfg.database["name"])
 
@@ -109,14 +110,15 @@ class Tweet(BaseModel):
 	unique_users = list(set(year_date["user_id"]))
 	for user in unique_users:
 		year_date_by_user = year_date[year_date["user_id"] == user]
-		for y in range(year_date_by_user["year"].min(),year_date_by_user["year"].max()+1):
-				for m in range(1,13):
-				count = year_date_by_user["day"][year_date_by_user["year"] == y][year_date_by_user["month"] == m].value_counts()
-				for i in list(count):
-					if i < 6:
-						count_list_by_user.append(i)
-					else:
-						count_list_by_user.append(6)
+		year = range(year_date_by_user["year"].min(),year_date_by_user["year"].max()+1)
+		month = range(1,13)
+		for y,m in product(year,month):
+			count = year_date_by_user["day"][year_date_by_user["year"] == y][year_date_by_user["month"] == m].value_counts()
+			for i in list(count):
+				if i < 6:
+					count_list_by_user.append(i)
+				else:
+					count_list_by_user.append(6)
 	
 	mean_count = np.mean(count_list_by_user)
 	median_count = np.median(count_list_by_user)

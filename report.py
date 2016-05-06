@@ -31,6 +31,12 @@ graph.ratio_followers_following(
     path
 )
 
+# number of tweets during active days
+path ="{}/images/density.png".format(current_path)
+tweet_density_per_user, mean_count_user, median_count_user = Tweet.tweet_density()
+tweet_density_per_bot, mean_count_bot, median_count_bot = Tweet.tweet_density(True)
+graph.tweet_density(tweet_density_per_user,tweet_density_per_bot,mean_count_user,median_count_user,mean_count_bot,median_count_bot,path)
+
 
 
 

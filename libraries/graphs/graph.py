@@ -1,5 +1,7 @@
 import pylab as pl
 import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 
 class Graph(object):
     def __init__(self, output_path):

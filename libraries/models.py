@@ -14,7 +14,6 @@ def create_database():
     db.drop_tables([User, Tweet], True)
     db.create_tables([User, Tweet], True)
 
-
 class BaseModel(Model):
     class Meta:
         database = db
@@ -91,39 +90,19 @@ class Tweet(BaseModel):
             (User.id << selected_users)
         ))
 
-        parsed_date = []
-        tweet_user = []
-
+        tweets_df = DataFrame(columns=["user_id", "date"], index=range(len(tweets)))
         for i, tweet in enumerate(tweets):
-            tweet_user.append(tweet.user_id)
-            parsed_date.append(parser.parse(tweet.date))
+            date = parser.parse(tweet.date)
 
-        year_date = DataFrame(columns=["year", "month", "day"], index=range(len(parsed_date)))
+            tweets_df["date"][i] = str(date.year)+str(date.month)+str(date.day)
+            tweets_df["user_id"][i] = tweet.user_id
 
-        for i, date in enumerate(parsed_date):
-            year_date["year"][i] = date.year
-            year_date["month"][i] = date.month
-            year_date["day"][i] = date.day
+        grouped = tweets_df.groupby(['user_id', 'date']).size().reset_index()
 
-        year_date["user_id"] = tweet_user
-
-        count_list_by_user = []
-        total_count_list = []
-        unique_users = list(set(year_date["user_id"]))
-        for user in unique_users:
-            year_date_by_user = year_date[year_date["user_id"] == user]
-            year = range(year_date_by_user["year"].min(), year_date_by_user["year"].max() + 1)
-            month = range(1, 13)
-            for y, m in product(year, month):
-                count = year_date_by_user["day"][year_date_by_user["year"] == y][
-                    year_date_by_user["month"] == m].value_counts()
-                for i in list(count):
-                    if i < 6:
-                        count_list_by_user.append(i)
-                    else:
-                        count_list_by_user.append(6)
-
+        count_list_by_user = grouped[0].apply(lambda x: x if (x < 6) else 6).tolist()
         mean_count = np.mean(count_list_by_user)
         median_count = np.median(count_list_by_user)
 
         return count_list_by_user, mean_count, median_count
+
+

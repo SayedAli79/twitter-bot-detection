@@ -105,4 +105,39 @@ class Tweet(BaseModel):
 
         return count_list_by_user, mean_count, median_count
 
+    @classmethod
+    def tweet_weekday(cls, is_bot=False, min_tweets=200):
+        selected_users = Tweet.select(Tweet.user) \
+            .group_by(Tweet.user) \
+            .having(fn.Count() >= min_tweets)
+
+        tweets = (Tweet.select(Tweet).join(User)
+            .where(
+            (User.is_bot == is_bot) &
+            (User.id << selected_users)
+        ))
+
+        tweets_df = DataFrame(columns=["user_id", "weekday"], index=range(len(tweets)))
+        for i, tweet in enumerate(tweets):
+
+            tweets_df["weekday"][i] = str(tweet.date.split(' ')[0])
+            tweets_df["user_id"][i] = tweet.user_id
+
+	grouped = tweets_df.groupby(['user_id', 'weekday']).size().reset_index()
+
+	list_days = set(grouped["weekday"])
+	stats_weekdays = DataFrame(columns=["weekday", "mean","std"], index=range(len(list_days)))
+	stats_weekdays["weekday"] = list_days
+	stats_weekdays["mean"] = [np.mean(grouped[0][grouped["weekday"] == day]) for day in list_days]
+	stats_weekdays["std"] = [np.std(grouped[0][grouped["weekday"] == day]) for day in list_days]
+
+	prop_weekdays = DataFrame(columns=["weekday", "prop","std"], index=range(len(list_days)))
+	prop_weekdays["weekday"] = list_days
+	prop_weekdays['prop'] = stats_weekdays['mean'] / sum(stats_weekdays['mean'])
+	prop_weekdays['std'] = stats_weekdays['std'] / sum(stats_weekdays['mean'])
+	sorted_weekdays = prop_weekdays.reindex([4,3,0,2,5,6,1])
+        return sorted_weekdays
+
+
+
 

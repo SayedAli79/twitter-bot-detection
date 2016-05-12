@@ -76,23 +76,22 @@ class Graph(object):
         pl.savefig(path)
 
     def hist_weekday(self, tweet_weekday_user, tweet_weekday_bot, path):
-	fig = plt.figure()
-	ax = plt.subplot(111)
+        fig = plt.figure()
+        ax = plt.subplot(111)
 
-	opacity = 0.4
+        opacity = 0.4
         labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-	bar_width = 0.3
-	x = range(len(tweet_weekday_user["prop"]))
-	#plt.xticks(x + bar_width)
-        #ax.set_xticklabels(labels)
-	plt.xticks([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], labels)
-	ax.bar(x, tweet_weekday_user["prop"],bar_width,color='b',alpha=opacity,label='Users', yerr=tweet_weekday_user["std"])
-	ax.bar([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], tweet_weekday_bot["prop"],bar_width,color='g',alpha=opacity,label='Bots', yerr=tweet_weekday_bot["std"])
+        bar_width = 0.3
+        x = range(len(tweet_weekday_user["prop"]))
 
-	ax.set_xlabel('Week days')
-	ax.set_ylabel('Tweets proportion per day (0 to 1)')
+        plt.xticks([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], labels)
+        ax.bar(x, tweet_weekday_user["prop"],bar_width,color='b',alpha=opacity,label='Users', yerr=tweet_weekday_user["std"])
+        ax.bar([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], tweet_weekday_bot["prop"],bar_width,color='g',alpha=opacity,label='Bots', yerr=tweet_weekday_bot["std"])
+
+        ax.set_xlabel('Week days')
+        ax.set_ylabel('Tweets proportion per day (0 to 1)')
         sns.plt.title('Proportion of tweets for each week day')
-	ax.legend()
+        ax.legend()
         pl.savefig(path)
 	
 

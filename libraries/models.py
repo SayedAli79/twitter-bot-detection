@@ -123,19 +123,19 @@ class Tweet(BaseModel):
             tweets_df["weekday"][i] = str(tweet.date.split(' ')[0])
             tweets_df["user_id"][i] = tweet.user_id
 
-	grouped = tweets_df.groupby(['user_id', 'weekday']).size().reset_index()
+        grouped = tweets_df.groupby(['user_id', 'weekday']).size().reset_index()
 
-	list_days = set(grouped["weekday"])
-	stats_weekdays = DataFrame(columns=["weekday", "mean","std"], index=range(len(list_days)))
-	stats_weekdays["weekday"] = list_days
-	stats_weekdays["mean"] = [np.mean(grouped[0][grouped["weekday"] == day]) for day in list_days]
-	stats_weekdays["std"] = [np.std(grouped[0][grouped["weekday"] == day]) for day in list_days]
+        list_days = set(grouped["weekday"])
+        stats_weekdays = DataFrame(columns=["weekday", "mean","std"], index=range(len(list_days)))
+        stats_weekdays["weekday"] = list_days
+        stats_weekdays["mean"] = [np.mean(grouped[0][grouped["weekday"] == day]) for day in list_days]
+        stats_weekdays["std"] = [np.std(grouped[0][grouped["weekday"] == day]) for day in list_days]
 
-	prop_weekdays = DataFrame(columns=["weekday", "prop","std"], index=range(len(list_days)))
-	prop_weekdays["weekday"] = list_days
-	prop_weekdays['prop'] = stats_weekdays['mean'] / sum(stats_weekdays['mean'])
-	prop_weekdays['std'] = stats_weekdays['std'] / sum(stats_weekdays['mean'])
-	sorted_weekdays = prop_weekdays.reindex([4,3,0,2,5,6,1])
+        prop_weekdays = DataFrame(columns=["weekday", "prop","std"], index=range(len(list_days)))
+        prop_weekdays["weekday"] = list_days
+        prop_weekdays['prop'] = stats_weekdays['mean'] / sum(stats_weekdays['mean'])
+        prop_weekdays['std'] = stats_weekdays['std'] / sum(stats_weekdays['mean'])
+        sorted_weekdays = prop_weekdays.reindex([4,3,0,2,5,6,1])
         return sorted_weekdays
 
 

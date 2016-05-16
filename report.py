@@ -15,32 +15,55 @@ access_token_secret = cfg.twitter["access_token_secret"]
 current_path = os.path.dirname(os.path.abspath(__file__))
 graph = Graph()
 
+human_tweets = Tweet.get_sample()
+bot_tweets = Tweet.get_sample(is_bot=True)
+human_users = User.get_sample()
+bot_users = User.get_sample(True)
+
+
 # Average mentions per user
 path ="{}/images/avg_mentions.png".format(current_path)
-avg_mentions_per_user = Tweet.avg_mentions_per_user().values()
-avg_mentions_per_bot = Tweet.avg_mentions_per_user(True).values()
-graph.avg_tweets(avg_mentions_per_user, avg_mentions_per_bot, path)
+graph.avg_tweets(
+    Tweet.avg_mentions_per_user(human_tweets).values(),
+    Tweet.avg_mentions_per_user(bot_tweets).values(),
+    path
+)
 
+#
 path ="{}/images/vocabulary.png".format(current_path)
-graph.vocabulary(Tweet.vocabulary_size().values(), Tweet.vocabulary_size(True).values(), path)
+graph.vocabulary(
+    Tweet.vocabulary_size(human_tweets).values(),
+    Tweet.vocabulary_size(bot_tweets).values(),
+    path
+)
 
 path ="{}/images/followers_following.png".format(current_path)
 graph.ratio_followers_following(
-    User.ratio_followers_following_per_users(),
-    User.ratio_followers_following_per_users(is_bot=True),
+    User.ratio_followers_following_per_users(human_users),
+    User.ratio_followers_following_per_users(bot_users),
     path
 )
 
 ## number of tweets during active days
 path ="{}/images/density.png".format(current_path)
-tweet_density_per_user, mean_count_user, median_count_user = Tweet.tweet_density()
-tweet_density_per_bot, mean_count_bot, median_count_bot = Tweet.tweet_density(True)
-graph.hist_density(tweet_density_per_user,tweet_density_per_bot,mean_count_user,median_count_user,mean_count_bot,median_count_bot,path)
+tweet_density_per_user, mean_count_user, median_count_user = Tweet.tweet_density(human_tweets)
+tweet_density_per_bot, mean_count_bot, median_count_bot = Tweet.tweet_density(bot_tweets)
+graph.hist_density(
+    tweet_density_per_user,
+    tweet_density_per_bot,
+    mean_count_user,
+    median_count_user,
+    mean_count_bot,
+    median_count_bot,
+    path
+)
 
 # number of tweets per week days
-tweet_weekday_user = Tweet.tweet_weekday()
-tweet_weekday_bot = Tweet.tweet_weekday(True)
 path ="{}/images/weekdays.png".format(current_path)
-graph.hist_weekday(tweet_weekday_user, tweet_weekday_bot,path)
+graph.hist_weekday(
+    Tweet.tweet_weekday(human_tweets),
+    Tweet.tweet_weekday(bot_tweets),
+    path
+)
 
 

@@ -33,9 +33,11 @@ class User(BaseModel):
         return self.followers / float(self.following)
 
     @classmethod
-    def ratio_followers_following_per_users(self, is_bot=False):
-        users = User.select().where(User.is_bot == is_bot)
+    def get_sample(self, is_bot=False):
+        return User.select().where(User.is_bot == is_bot)
 
+    @classmethod
+    def ratio_followers_following_per_users(self, users):
         return [user.ratio_followers_following() for user in users]
 
 
@@ -46,7 +48,7 @@ class Tweet(BaseModel):
     mentions = CharField()
 
     @classmethod
-    def get_sample(cls, is_bot, min_tweets=200):
+    def get_sample(cls, is_bot=False, min_tweets=200):
         selected_users = Tweet.select(Tweet.user) \
             .group_by(Tweet.user) \
             .having(fn.Count() >= min_tweets)
@@ -60,9 +62,7 @@ class Tweet(BaseModel):
         return tweets
 
     @classmethod
-    def avg_mentions_per_user(cls, is_bot=False, min_tweets=200):
-        tweets = cls.get_sample(is_bot, min_tweets)
-
+    def avg_mentions_per_user(cls, tweets):
         mentions_per_user = defaultdict(lambda: [])
         for tweet in tweets:
             count = 0
@@ -75,9 +75,7 @@ class Tweet(BaseModel):
         return avg_per_user
 
     @classmethod
-    def vocabulary_size(cls, is_bot=False, min_tweets=200):
-        tweets = cls.get_sample(is_bot, min_tweets)
-
+    def vocabulary_size(cls, tweets):
         words_per_user = defaultdict(lambda: set())
         for tweet in tweets:
             for word in tweet.text.split(" "):
@@ -86,9 +84,7 @@ class Tweet(BaseModel):
         return {name: len(words) for (name, words) in words_per_user.iteritems()}
 
     @classmethod
-    def tweet_density(cls, is_bot=False, min_tweets=200):
-        tweets = cls.get_sample(is_bot, min_tweets)
-
+    def tweet_density(cls, tweets):
         tweets_df = DataFrame(columns=["user_id", "date"], index=range(len(tweets)))
         for i, tweet in enumerate(tweets):
             date = parser.parse(tweet.date)
@@ -105,9 +101,7 @@ class Tweet(BaseModel):
         return count_list_by_user, mean_count, median_count
 
     @classmethod
-    def tweet_weekday(cls, is_bot=False, min_tweets=200):
-        tweets = cls.get_sample(is_bot, min_tweets)
-
+    def tweet_weekday(cls, tweets):
         tweets_df = DataFrame(columns=["user_id", "weekday"], index=range(len(tweets)))
 
         for i, tweet in enumerate(tweets):

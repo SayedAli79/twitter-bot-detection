@@ -1,10 +1,11 @@
-from peewee import *
-from config import app_config as cfg
 from collections import defaultdict
+
 import numpy as np
-from pandas import DataFrame
 from dateutil import parser
-from itertools import product
+from pandas import DataFrame
+from peewee import *
+
+from config import app_config as cfg
 
 db = SqliteDatabase(cfg.database["name"])
 
@@ -45,8 +46,22 @@ class Tweet(BaseModel):
     mentions = CharField()
 
     @classmethod
-    def avg_mentions_per_user(cls, is_bot=False):
-        tweets = Tweet.select(Tweet).join(User).where(User.is_bot == is_bot)
+    def get_sample(cls, is_bot, min_tweets=200):
+        selected_users = Tweet.select(Tweet.user) \
+            .group_by(Tweet.user) \
+            .having(fn.Count() >= min_tweets)
+
+        tweets = (Tweet.select(Tweet).join(User)
+            .where(
+            (User.is_bot == is_bot) &
+            (User.id << selected_users)
+        ))
+
+        return tweets
+
+    @classmethod
+    def avg_mentions_per_user(cls, is_bot=False, min_tweets=200):
+        tweets = cls.get_sample(is_bot, min_tweets)
 
         mentions_per_user = defaultdict(lambda: [])
         for tweet in tweets:
@@ -61,15 +76,7 @@ class Tweet(BaseModel):
 
     @classmethod
     def vocabulary_size(cls, is_bot=False, min_tweets=200):
-        selected_users = Tweet.select(Tweet.user) \
-            .group_by(Tweet.user) \
-            .having(fn.Count() >= min_tweets)
-
-        tweets = (Tweet.select(Tweet).join(User)
-            .where(
-            (User.is_bot == is_bot) &
-            (User.id << selected_users)
-        ))
+        tweets = cls.get_sample(is_bot, min_tweets)
 
         words_per_user = defaultdict(lambda: set())
         for tweet in tweets:
@@ -80,15 +87,7 @@ class Tweet(BaseModel):
 
     @classmethod
     def tweet_density(cls, is_bot=False, min_tweets=200):
-        selected_users = Tweet.select(Tweet.user) \
-            .group_by(Tweet.user) \
-            .having(fn.Count() >= min_tweets)
-
-        tweets = (Tweet.select(Tweet).join(User)
-            .where(
-            (User.is_bot == is_bot) &
-            (User.id << selected_users)
-        ))
+        tweets = cls.get_sample(is_bot, min_tweets)
 
         tweets_df = DataFrame(columns=["user_id", "date"], index=range(len(tweets)))
         for i, tweet in enumerate(tweets):
@@ -107,19 +106,11 @@ class Tweet(BaseModel):
 
     @classmethod
     def tweet_weekday(cls, is_bot=False, min_tweets=200):
-        selected_users = Tweet.select(Tweet.user) \
-            .group_by(Tweet.user) \
-            .having(fn.Count() >= min_tweets)
-
-        tweets = (Tweet.select(Tweet).join(User)
-            .where(
-            (User.is_bot == is_bot) &
-            (User.id << selected_users)
-        ))
+        tweets = cls.get_sample(is_bot, min_tweets)
 
         tweets_df = DataFrame(columns=["user_id", "weekday"], index=range(len(tweets)))
-        for i, tweet in enumerate(tweets):
 
+        for i, tweet in enumerate(tweets):
             tweets_df["weekday"][i] = str(tweet.date.split(' ')[0])
             tweets_df["user_id"][i] = tweet.user_id
 
@@ -136,6 +127,7 @@ class Tweet(BaseModel):
         prop_weekdays['prop'] = stats_weekdays['mean'] / sum(stats_weekdays['mean'])
         prop_weekdays['std'] = stats_weekdays['std'] / sum(stats_weekdays['mean'])
         sorted_weekdays = prop_weekdays.reindex([4,3,0,2,5,6,1])
+
         return sorted_weekdays
 
 

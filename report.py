@@ -13,10 +13,10 @@ access_token_secret = cfg.twitter["access_token_secret"]
 
 # Start
 current_path = os.path.dirname(os.path.abspath(__file__))
+graph = Graph()
 
 # Average mentions per user
 path ="{}/images/avg_mentions.png".format(current_path)
-graph = Graph(path)
 avg_mentions_per_user = Tweet.avg_mentions_per_user().values()
 avg_mentions_per_bot = Tweet.avg_mentions_per_user(True).values()
 graph.avg_tweets(avg_mentions_per_user, avg_mentions_per_bot, path)

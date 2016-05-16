@@ -4,9 +4,6 @@ import seaborn as sns
 import numpy as np
 
 class Graph(object):
-    def __init__(self, output_path):
-        self.output_path = output_path
-
     def avg_tweets(self, values_human, values_bot, path):
         self.boxplot(values_human, values_bot, "Avg mentions per tweet", path)
 

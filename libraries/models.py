@@ -40,6 +40,12 @@ class User(BaseModel):
     def ratio_followers_following_per_users(self, users):
         return [user.ratio_followers_following() for user in users]
 
+    @classmethod
+    def followers_friends_per_users(self, users):
+	follow_df = DataFrame(columns=["followers","following"], index=range(len(users)))
+        follow_df["followers"] = [user.followers for user in users]
+        follow_df["following"] = [user.following for user in users]
+        return follow_df
 
 class Tweet(BaseModel):
     user = ForeignKeyField(User, related_name='tweets')

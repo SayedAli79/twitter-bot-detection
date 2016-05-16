@@ -47,7 +47,7 @@ class Graph(object):
 
         plt.legend([line_mean, line_median], ['mean', 'median'])
 
-        sns.plt.title('number of tweets per active tweeting day for USERS')
+        sns.plt.title('number of tweets per active tweeting day for Humans')
         sns.plt.xlabel('number of tweets')
         sns.plt.ylabel('fraction of active tweeting days (0 to 1)')
 
@@ -67,7 +67,7 @@ class Graph(object):
 
         plt.legend([line_mean, line_median], ['mean', 'median'])
 
-        sns.plt.title('number of tweets per active tweeting day for BOTS')
+        sns.plt.title('number of tweets per active tweeting day for Bots')
         sns.plt.xlabel('number of tweets')
 
         pl.savefig(path)
@@ -76,7 +76,7 @@ class Graph(object):
         fig = plt.figure()
         ax = plt.subplot(111)
 
-        opacity = 0.4
+
         labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         bar_width = 0.3
         x = range(len(tweet_weekday_user["prop"]))
@@ -90,5 +90,30 @@ class Graph(object):
         sns.plt.title('Proportion of tweets for each week day')
         ax.legend()
         pl.savefig(path)
-	
+
+    def Nb_followers_following(self, human, bot, path):
+        opacity = 0.6
+        fig = plt.figure()
+        fig.subplots_adjust(hspace=.5)
+        ax1 = plt.subplot(211)  
+        x = human["following"]
+        y = human["followers"]
+        plt.scatter(x,y,color='g')
+        plt.ylim([0,100000])
+        plt.xlim([-1000,100000])
+        plt.plot([0,100000],[0,100000],color='g',alpha=opacity)
+        ax1.set_title('Humans')
+        ax1.set_xlabel('Following')
+        ax1.set_ylabel('Followers')
+        ax2 = plt.subplot(212)
+        x = bot["following"]
+        y = bot["followers"]
+        plt.scatter(x,y,color='r')
+ 	plt.ylim([0,100000])
+        plt.xlim([-1000,100000])
+        plt.plot([0,100000],[0,100000],color='r',alpha=opacity)
+        ax2.set_title('Bots')
+        ax2.set_xlabel('Following')
+        ax2.set_ylabel('Followers')
+        pl.savefig(path)
 

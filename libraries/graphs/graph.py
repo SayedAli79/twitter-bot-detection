@@ -28,7 +28,7 @@ class Graph(object):
         pl.setp(ax, xticks=[1, 2], xticklabels=["Humans", "Bots"])
         pl.savefig(path)
 
-    def tweet_density(self, tweet_density_per_user, tweet_density_per_bot, mean_count_user, median_count_user,
+    def hist_density(self, tweet_density_per_user, tweet_density_per_bot, mean_count_user, median_count_user,
                       mean_count_bot, median_count_bot, path):
         gaussian_kernel_density = []
         gaussian_kernel_density[:] = [x - 0.5 for x in tweet_density_per_user]
@@ -74,3 +74,24 @@ class Graph(object):
         sns.plt.xlabel('number of tweets')
 
         pl.savefig(path)
+
+    def hist_weekday(self, tweet_weekday_user, tweet_weekday_bot, path):
+        fig = plt.figure()
+        ax = plt.subplot(111)
+
+        opacity = 0.4
+        labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        bar_width = 0.3
+        x = range(len(tweet_weekday_user["prop"]))
+
+        plt.xticks([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], labels)
+        ax.bar(x, tweet_weekday_user["prop"],bar_width,color='b',alpha=opacity,label='Users', yerr=tweet_weekday_user["std"])
+        ax.bar([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], tweet_weekday_bot["prop"],bar_width,color='g',alpha=opacity,label='Bots', yerr=tweet_weekday_bot["std"])
+
+        ax.set_xlabel('Week days')
+        ax.set_ylabel('Tweets proportion per day (0 to 1)')
+        sns.plt.title('Proportion of tweets for each week day')
+        ax.legend()
+        pl.savefig(path)
+	
+

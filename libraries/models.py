@@ -42,9 +42,14 @@ class User(BaseModel):
 
     @classmethod
     def followers_friends_per_users(self, users):
-	follow_df = DataFrame(columns=["followers","following"], index=range(len(users)))
+        follow_df = DataFrame(columns=["followers","following","accountreputation","CDFx","CDFy"], index=range(len(users)))
         follow_df["followers"] = [user.followers for user in users]
         follow_df["following"] = [user.following for user in users]
+        follow_df["accountreputation"] = [(float(user.followers) / (float(user.followers) + float(user.following)))   for user in users]
+        follow_df["CDFx"] = np.sort(follow_df["accountreputation"])
+        nom = range(len(follow_df["accountreputation"]))
+        denom = float(len(follow_df["accountreputation"]))
+	follow_df["CDFy"] = np.array(nom) / denom 
         return follow_df
 
 class Tweet(BaseModel):

@@ -76,7 +76,7 @@ class Graph(object):
         fig = plt.figure()
         ax = plt.subplot(111)
 
-	opacity = 0.4
+        opacity = 0.4
         labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         bar_width = 0.3
         x = range(len(tweet_weekday_user["prop"]))

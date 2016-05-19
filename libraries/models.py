@@ -51,7 +51,7 @@ class User(BaseModel):
         follow_df["CDFx"] = np.sort(follow_df["accountreputation"])
         nom = range(len(follow_df["accountreputation"]))
         denom = float(len(follow_df["accountreputation"]))
-	follow_df["CDFy"] = np.array(nom) / denom 
+        follow_df["CDFy"] = np.array(nom) / denom 
         return follow_df
 
     @classmethod

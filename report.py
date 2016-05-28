@@ -37,14 +37,6 @@ graph.vocabulary(
     path
 )
 
-## ratio followers/following
-path ="{}/images/followers_following.png".format(current_path)
-graph.ratio_followers_following(
-    User.ratio_followers_following_per_users(human_users),
-    User.ratio_followers_following_per_users(bot_users),
-    path
-)
-
 ## number of tweets during active days
 path ="{}/images/density.png".format(current_path)
 tweet_density_per_user, mean_count_user, median_count_user = Tweet.tweet_density(human_tweets)

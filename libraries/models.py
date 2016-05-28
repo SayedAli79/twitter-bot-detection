@@ -37,10 +37,6 @@ class User(BaseModel):
         return User.select().where(User.is_bot == is_bot)
 
     @classmethod
-    def ratio_followers_following_per_users(self, users):
-        return [user.ratio_followers_following() for user in users]
-
-    @classmethod
     def followers_friends_per_users(self, users):
         follow_df = DataFrame(columns=["followers","following","accountreputation","CDFx","CDFy"], index=range(len(users)))
         for user in users:

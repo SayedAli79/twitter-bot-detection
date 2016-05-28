@@ -47,7 +47,7 @@ class Graph(object):
 
         plt.legend([line_mean, line_median], ['mean', 'median'])
 
-        sns.plt.title('number of tweets per active tweeting day for USERS')
+        sns.plt.title('number of tweets per active tweeting day for Humans')
         sns.plt.xlabel('number of tweets')
         sns.plt.ylabel('fraction of active tweeting days (0 to 1)')
 
@@ -67,7 +67,7 @@ class Graph(object):
 
         plt.legend([line_mean, line_median], ['mean', 'median'])
 
-        sns.plt.title('number of tweets per active tweeting day for BOTS')
+        sns.plt.title('number of tweets per active tweeting day for Bots')
         sns.plt.xlabel('number of tweets')
 
         pl.savefig(path)
@@ -82,7 +82,7 @@ class Graph(object):
         x = range(len(tweet_weekday_user["prop"]))
 
         plt.xticks([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], labels)
-        ax.bar(x, tweet_weekday_user["prop"],bar_width,color='b',alpha=opacity,label='Users', yerr=tweet_weekday_user["std"])
+        ax.bar(x, tweet_weekday_user["prop"],bar_width,color='b',alpha=opacity,label='Humans', yerr=tweet_weekday_user["std"])
         ax.bar([0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3], tweet_weekday_bot["prop"],bar_width,color='g',alpha=opacity,label='Bots', yerr=tweet_weekday_bot["std"])
 
         ax.set_xlabel('Week days')
@@ -90,5 +90,42 @@ class Graph(object):
         sns.plt.title('Proportion of tweets for each week day')
         ax.legend()
         pl.savefig(path)
-	
+
+    def Nb_followers_following(self, human, bot, path):
+        opacity = 0.6
+        fig = plt.figure()
+        fig.subplots_adjust(hspace=.5)
+        ax1 = plt.subplot(211)  
+        xhuman = human["following"]
+        yhuman = human["followers"]
+        plt.scatter(xhuman,yhuman,color='g',label='Humans')
+        plt.ylim([0,100000])
+        plt.xlim([-1000,100000])
+        plt.plot([0,100000],[0,100000],color='gray',alpha=opacity)
+        xbot = bot["following"]
+        ybot = bot["followers"]
+        plt.scatter(xbot,ybot,color='r',label='Bots')
+        ax1.set_title('Nb Followers/Following')
+        ax1.set_xlabel('Following')
+        ax1.set_ylabel('Followers')
+        ax1.legend(bbox_to_anchor=(0.9,0.7 ),
+           bbox_transform=plt.gcf().transFigure)
+
+        ax2 = plt.subplot(212)
+        CFDxhuman = human["CDFx"]
+        CFDyhuman = human["CDFy"]
+        plt.plot(CFDxhuman,CFDyhuman,color='g',label='Humans')
+
+        CFDxbot = bot["CDFx"]
+        CFDybot = bot["CDFy"]
+        plt.plot(CFDxbot,CFDybot,color='r',label='Bots')
+        plt.ylim([-0.05,1.05])
+        plt.xlim([0,1.05])
+        ax2.set_title('CDF of account reputation')
+        ax2.set_xlabel('Account reputation')
+        ax2.set_ylabel('CDF')
+        ax2.legend(bbox_to_anchor=(0.9,0.2 ),
+           bbox_transform=plt.gcf().transFigure)
+
+        pl.savefig(path)
 

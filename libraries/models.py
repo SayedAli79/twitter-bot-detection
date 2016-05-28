@@ -40,6 +40,24 @@ class User(BaseModel):
     def ratio_followers_following_per_users(self, users):
         return [user.ratio_followers_following() for user in users]
 
+    @classmethod
+    def followers_friends_per_users(self, users):
+        follow_df = DataFrame(columns=["followers","following","accountreputation","CDFx","CDFy"], index=range(len(users)))
+        for user in users:
+                follow_df["followers"] = user.followers
+                follow_df["following"] = user.following
+                follow_df["accountreputation"] = (float(user.followers) / (float(user.followers) + float(user.following)))
+
+        follow_df["CDFx"] = np.sort(follow_df["accountreputation"])
+        nom = range(len(follow_df["accountreputation"]))
+        denom = float(len(follow_df["accountreputation"]))
+        follow_df["CDFy"] = np.array(nom) / denom 
+        return follow_df
+
+    @classmethod
+    def entropy(X):
+        probs = [np.mean(X == c) for c in set(X)]
+        return np.sum(-p * np.log2(p) for p in probs)
 
 class Tweet(BaseModel):
     user = ForeignKeyField(User, related_name='tweets')
@@ -113,8 +131,8 @@ class Tweet(BaseModel):
         list_days = set(grouped["weekday"])
         stats_weekdays = DataFrame(columns=["weekday", "mean","std"], index=range(len(list_days)))
         stats_weekdays["weekday"] = list_days
-        stats_weekdays["mean"] = [np.mean(grouped[0][grouped["weekday"] == day]) for day in list_days]
-        stats_weekdays["std"] = [np.std(grouped[0][grouped["weekday"] == day]) for day in list_days]
+        stats_weekdays["mean"] = list(map(lambda day : np.mean(grouped[0][grouped["weekday"] == day]),list_days))
+        stats_weekdays["std"] = list(map(lambda day : np.std(grouped[0][grouped["weekday"] == day]),list_days))
 
         prop_weekdays = DataFrame(columns=["weekday", "prop","std"], index=range(len(list_days)))
         prop_weekdays["weekday"] = list_days

@@ -67,5 +67,3 @@ User.followers_friends_per_users(bot_users),
     path
 )
 
-print(User.followers_friends_per_users(human_users))
-

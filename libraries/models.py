@@ -35,19 +35,19 @@ class User(BaseModel):
 
     @classmethod
     def followers_friends_per_users(self, users):
-        follow_df = DataFrame(columns=["followers", "following", "accountreputation", "CDFx", "CDFy"], index=range(len(users)))
+        data = [{
+            "followers" : user.followers,
+            "following" : user.following,
+            "accountreputation" : user.reputation()
+        } for user in users]
 
-        for user in users:
-                follow_df["followers"] = user.followers
-                follow_df["following"] = user.following
-                follow_df["accountreputation"] = user.reputation()
+        df = DataFrame(data, columns=["followers", "following", "accountreputation", "CDFx", "CDFy"], index=range(len(users)))
+        df_size = len(df.index)
 
-        df_size = len(follow_df.index)
+        df["CDFx"] = np.sort(df["accountreputation"])
+        df["CDFy"] = np.array(range(df_size)) / float(df_size)
 
-        follow_df["CDFx"] = np.sort(follow_df["accountreputation"])
-        follow_df["CDFy"] = np.array(range(df_size)) / float(df_size)
-
-        return follow_df
+        return df
 
     @classmethod
     def entropy(X):

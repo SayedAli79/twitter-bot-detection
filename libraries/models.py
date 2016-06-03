@@ -7,7 +7,13 @@ from peewee import *
 
 from config import app_config as cfg
 
-db = SqliteDatabase(cfg.database["name"])
+# to delete when remote db works 
+#db = SqliteDatabase(cfg.database["name"]) 
+
+
+# Connect to the database URL defined in the app_config, falling
+# back to a local database if no database URL is specified.
+db = MySQLDatabase(cfg.database["database"], host=cfg.database['host'], port=cfg.database['port'], user=cfg.database['username'], passwd=cfg.database['password'])
 
 
 def create_database():
@@ -21,7 +27,7 @@ class BaseModel(Model):
 
 
 class User(BaseModel):
-    screen_name = CharField()
+    screen_name = CharField(primary_key=True)
     is_bot = BooleanField()
     followers = IntegerField()
     following = IntegerField()

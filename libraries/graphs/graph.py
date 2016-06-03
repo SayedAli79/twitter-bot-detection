@@ -1,7 +1,11 @@
 import pylab as pl
 import matplotlib.pyplot as plt
+
 import seaborn as sns
 import numpy as np
+import pandas as pd
+from pandas.tools.plotting import table
+
 
 class Graph(object):
     def avg_tweets(self, values_human, values_bot, path):
@@ -128,4 +132,38 @@ class Graph(object):
            bbox_transform=plt.gcf().transFigure)
 
         pl.savefig(path)
+
+
+    def top_sources(self, human, bot, path):
+        nb_sources = 3
+        sources = pd.concat([human, bot], axis=1)
+        sources.columns = ['humans', 'bots']
+
+        # fetch top 3 for each type
+        top_humans = sources.sort_values(by='humans', ascending=False).head(nb_sources).fillna(0)
+        top_bots = sources.sort_values(by='bots', ascending=False).head(nb_sources).fillna(0)
+
+        mixed_sources = pd.concat([top_humans, top_bots])
+
+        def add_percentage(df):
+            bots_perc = df['bots'] / (df['bots'] + df['humans']) * 100
+            df['% bots'] = bots_perc
+            df['% humans'] = 100 - bots_perc
+
+            return df
+
+        sources = add_percentage(mixed_sources).applymap(lambda x: '%.2f' % x)
+        sources = sources.drop(["humans", "bots"], axis=1)
+
+        pl.figure(figsize=(15,5))
+
+        ax1 = plt.subplot(111, frame_on=False)
+        ax1.set_title("Top {} sources per type.".format(nb_sources))
+        ax1.xaxis.set_visible(False)
+        ax1.yaxis.set_visible(False)
+
+        table(ax1, sources, loc="center")
+
+        pl.savefig(path)
+
 

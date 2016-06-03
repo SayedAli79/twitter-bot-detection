@@ -59,6 +59,7 @@ class Tweet(BaseModel):
     user = ForeignKeyField(User, related_name='tweets')
     text = CharField()
     date = CharField()
+    source = CharField()
     mentions = CharField()
 
     @classmethod
@@ -137,6 +138,12 @@ class Tweet(BaseModel):
         sorted_weekdays = prop_weekdays.reindex([4,3,0,2,5,6,1])
 
         return sorted_weekdays
+
+    @classmethod
+    def top_sources(cls, tweets):
+        sources = [{"source": tweet.source} for tweet in tweets]
+
+        return DataFrame(sources).stack().value_counts()
 
 
 

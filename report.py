@@ -20,8 +20,15 @@ bot_tweets = Tweet.get_sample(is_bot=True)
 human_users = User.get_sample()
 bot_users = User.get_sample(True)
 
+# top sources
+path ="{}/images/top_sources.png".format(current_path)
+graph.top_sources(
+    Tweet.top_sources(human_tweets),
+    Tweet.top_sources(bot_tweets),
+    path
+)
 
-## Average mentions per user
+# Average mentions per user
 path ="{}/images/avg_mentions.png".format(current_path)
 graph.avg_tweets(
     Tweet.avg_mentions_per_user(human_tweets).values(),
@@ -37,7 +44,7 @@ graph.vocabulary(
     path
 )
 
-## number of tweets during active days
+# number of tweets during active days
 path ="{}/images/density.png".format(current_path)
 tweet_density_per_user, mean_count_user, median_count_user = Tweet.tweet_density(human_tweets)
 tweet_density_per_bot, mean_count_bot, median_count_bot = Tweet.tweet_density(bot_tweets)
@@ -51,7 +58,7 @@ graph.hist_density(
     path
 )
 
-## number of tweets per week days
+# number of tweets per week days
 path ="{}/images/weekdays.png".format(current_path)
 graph.hist_weekday(
     Tweet.tweet_weekday(human_tweets),

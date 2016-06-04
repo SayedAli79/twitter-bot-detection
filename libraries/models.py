@@ -27,7 +27,7 @@ class BaseModel(Model):
 
 
 class User(BaseModel):
-    screen_name = CharField(primary_key=True)
+    screen_name = CharField()
     is_bot = BooleanField()
     followers = IntegerField()
     following = IntegerField()
@@ -71,12 +71,12 @@ class Tweet(BaseModel):
     def get_sample(cls, is_bot=False, min_tweets=200):
         selected_users = Tweet.select(Tweet.user) \
             .group_by(Tweet.user) \
-            .having(fn.Count() >= min_tweets)
+            .having(fn.Count(Tweet.user) >= min_tweets)
 
         tweets = (Tweet.select(Tweet).join(User)
             .where(
-            (User.is_bot == is_bot) &
-            (User.id << selected_users)
+            User.is_bot == is_bot,
+            User.id << selected_users
         ))
 
         return tweets

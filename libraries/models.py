@@ -26,11 +26,8 @@ class User(BaseModel):
     followers = IntegerField()
     following = IntegerField()
 
-    def ratio_followers_following(self):
-        if self.following == 0:
-            return 0
-
-        return self.followers / float(self.following)
+    def reputation(self):
+        return self.followers / float(self.followers + self.following)
 
     @classmethod
     def get_sample(self, is_bot=False):
@@ -38,21 +35,24 @@ class User(BaseModel):
 
     @classmethod
     def followers_friends_per_users(self, users):
-        follow_df = DataFrame(columns=["followers","following","accountreputation","CDFx","CDFy"], index=range(len(users)))
-        for user in users:
-                follow_df["followers"] = user.followers
-                follow_df["following"] = user.following
-                follow_df["accountreputation"] = (float(user.followers) / (float(user.followers) + float(user.following)))
+        data = [{
+            "followers" : user.followers,
+            "following" : user.following,
+            "accountreputation" : user.reputation()
+        } for user in users]
 
-        follow_df["CDFx"] = np.sort(follow_df["accountreputation"])
-        nom = range(len(follow_df["accountreputation"]))
-        denom = float(len(follow_df["accountreputation"]))
-        follow_df["CDFy"] = np.array(nom) / denom 
-        return follow_df
+        df = DataFrame(data, columns=["followers", "following", "accountreputation", "CDFx", "CDFy"], index=range(len(users)))
+        df_size = len(df.index)
+
+        df["CDFx"] = np.sort(df["accountreputation"])
+        df["CDFy"] = np.array(range(df_size)) / float(df_size)
+
+        return df
 
     @classmethod
     def entropy(X):
         probs = [np.mean(X == c) for c in set(X)]
+
         return np.sum(-p * np.log2(p) for p in probs)
 
 class Tweet(BaseModel):

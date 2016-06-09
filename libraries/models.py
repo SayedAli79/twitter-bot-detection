@@ -27,7 +27,10 @@ class User(BaseModel):
     following = IntegerField()
 
     def reputation(self):
-        return self.followers / float(self.followers + self.following)
+        if self.followers == 0:
+            return 0
+        else:
+            return self.followers / float(self.followers + self.following)
 
     @classmethod
     def get_sample(self, is_bot=False):

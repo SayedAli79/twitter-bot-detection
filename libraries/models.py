@@ -7,12 +7,7 @@ from peewee import *
 
 from config import app_config as cfg
 
-# to delete when remote db works 
-#db = SqliteDatabase(cfg.database["name"]) 
-
-
-# Connect to the database URL defined in the app_config, falling
-# back to a local database if no database URL is specified.
+# Connect to the database URL defined in the app_config
 db = MySQLDatabase(cfg.database["database"], host=cfg.database['host'], port=cfg.database['port'], user=cfg.database['username'], passwd=cfg.database['password'])
 
 

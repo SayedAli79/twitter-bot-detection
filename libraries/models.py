@@ -8,7 +8,6 @@ from playhouse.db_url import connect
 from config import app_config as cfg
 
 # Connect to the database URL defined in the app_config
-#db = MySQLDatabase(cfg.database["database"], host=cfg.database['host'], port=cfg.database['port'], user=cfg.database['username'], passwd=cfg.database['password'])
 db = connect(cfg.url)
 
 

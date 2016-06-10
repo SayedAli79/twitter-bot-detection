@@ -8,7 +8,7 @@ from playhouse.db_url import connect
 from config import app_config as cfg
 
 # Connect to the database URL defined in the app_config
-db = connect(cfg.url)
+db = connect(cfg.database['url'])
 
 
 def create_database():

@@ -4,10 +4,11 @@ import numpy as np
 from dateutil import parser
 from pandas import DataFrame
 from peewee import *
-
+from playhouse.db_url import connect
 from config import app_config as cfg
 
-db = SqliteDatabase(cfg.database["name"])
+# Connect to the database URL defined in the app_config
+db = connect(cfg.database['url'])
 
 
 def create_database():
@@ -69,12 +70,12 @@ class Tweet(BaseModel):
     def get_sample(cls, is_bot=False, min_tweets=200):
         selected_users = Tweet.select(Tweet.user) \
             .group_by(Tweet.user) \
-            .having(fn.Count() >= min_tweets)
+            .having(fn.Count(Tweet.user) >= min_tweets)
 
         tweets = (Tweet.select(Tweet).join(User)
             .where(
-            (User.is_bot == is_bot) &
-            (User.id << selected_users)
+            User.is_bot == is_bot,
+            User.id << selected_users
         ))
 
         return tweets

@@ -39,22 +39,31 @@ if args.crawl:
     client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
     importer = TweetImporter(client)
     initial_user = importer.createUser(args.specified_user)
-    nodes = importer.fromFollowers(initial_user.screen_name, 200)
+
+    # import tweets from initial user
+    importer.fromUser(args.specified_user, 200)
 
     # initial user mark as visited (stack) 
     stack.append(initial_user.screen_name)
 
     # load the nodes to visit next (followers list)
-    #nodes = client.followers_list(initial_user.screen_name)
+    nodes = client.followers_ids(args.specified_user)
+
+    new_nodes = []
 
     for node in nodes:
         if node in stack:
              pass
         else:
             # import tweets from followers of each node
-            followers = importer.fromFollowers(node, 200)
+            importer.fromUser(node, 200)
             # mark the node as visited (stack) 
             stack.append(node)
+            # new list of followers to investigate
+            new_nodes.append(client.followers_ids(args.specified_user)) 
+
+    print(len(new_nodes))
+
 
 
 

@@ -19,7 +19,6 @@ class TweetImporter(object):
         return user
 
     def fromUser(self, screen_name, tweets_number=10, is_bot=False):
-        try:
 
             user = self.createUser(screen_name, is_bot)
 
@@ -47,8 +46,7 @@ class TweetImporter(object):
                         source = status.source,
                         mentions = name_mentions_string
                 )
-        except tweepy.TweepError:
-            print("Failed to import tweets from that user, Skipping...")
+
 
     def fromFollowers(self, user, tweets_number=10):
         followers = self.twitter_client.followers_list(screen_name=user, count=200)

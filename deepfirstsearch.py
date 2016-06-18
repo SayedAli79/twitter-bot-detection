@@ -41,7 +41,7 @@ if args.crawl:
     initial_user = importer.createUser(args.specified_user)
 
     # import tweets from initial user
-    importer.fromUser(node, 200)
+    importer.fromUser(args.specified_user, 200)
 
     # initial user mark as visited (stack) 
     stack.append(initial_user.screen_name)
@@ -77,7 +77,7 @@ if args.crawl:
        # check condition to end the recursive function 
        if depth > 0:
            print(depth > 0, "crawling through followers...")
-           follower_crawl(new_nodes,stack,depth=depth)
+           return follower_crawl(new_nodes,stack,depth=depth)
        else: 
            print(depth == 0, "end of crawling procedure")  
         return (stack, new_nodes)

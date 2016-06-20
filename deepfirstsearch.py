@@ -33,8 +33,8 @@ if args.create_db:
 
 if args.crawl:
 
-    # initialize the stack
-    stack = []
+    # initialize the list of users crawled
+    crawled_users = []
 
     client = TwitterClient(consumer_key, consumer_secret, access_token, access_token_secret)
     importer = TweetImporter(client)
@@ -43,46 +43,52 @@ if args.crawl:
     # import tweets from initial user
     importer.fromUser(args.specified_user, 200)
 
-    # initial user mark as visited (stack) 
-    stack.append(initial_user.screen_name)
+    # initial user mark as scanned 
+    crawled_users.append(initial_user.screen_name)
 
-    # load the nodes to visit next (followers list)
-    nodes = client.followers_ids(args.specified_user)
+    # load the followers to scan (followers list)
+    followers_from_scan = client.followers_ids(args.specified_user)
 
 
-    def follower_crawl(nodes,stack,depth=1):
+    def follower_crawl(followers_from_crawl,crawled_users,crawl_depth=1):
         # init new nodes to investigate from node
-        new_nodes = []
-        for node in nodes:
-            if node in stack:
+        new_followers = []
+        for follower in followers_from_crawl:
+            if follower in crawled_users:
                  pass
             else:
                 # try/except here to avoid protected followers to breack for loop
                 try:
                     # new list of followers to investigate
-                    node_followers = client.followers_ids(node)
+                    crawl_followers = client.followers_ids(follower)
                 except tweepy.TweepError:
                     print("Failed to import followers from that user, Skipping...")
-                    node_followers = ['']
+                    crawl_followers = ['']
                 # mark the node as visited (stack) 
-                stack.append(node)
+                crawled_users.append(follower)
                 # check weither new followers have already been investigated -> discard followers that are already investigated
-                for follower in node_followers:
-                    if not follower in (stack, nodes):
-                        new_nodes.append(follower) 
+                for crawled_follower in crawled_followers:
+                    if not crawled_follower in (crawled_users, followers_from_crawl):
+                        new_followers.append(crawled_follower) 
                     else:
                         pass
        # condition to end recursive function is depth == 0
-       depth = depth - 1
+       crawl_depth = crawl_depth - 1
        # check condition to end the recursive function 
-       if depth > 0:
-           print(depth > 0, "crawling through followers...")
-           return follower_crawl(new_nodes,stack,depth=depth)
-       else: 
-           print(depth == 0, "end of crawling procedure")  
-        return (stack, new_nodes)
+       if crawl_depth > 0:
+           print(crawl_depth > 0, "crawling through followers...")
+           return follower_crawl(new_followers,crawled_users,crawl_depth=crawl_depth)
+       elif crawl_depth == 0: 
+           print(crawl_depth == 0, "end of crawling procedure")  
+           total_crawl_list = crawled_users + new_followers
+           return (total_crawl_list)
+       else:
+           print(crawl_depth < 0, "ErrorValue: negative value for crawling depth!")          
 
 # ______ MAKE NEW FUNCTION __________________
 # import tweets from followers of each node
-#importer.fromUser(node, 200)
+    def tweet_crawl(total_crawl_list):
+        for user in total_crawl_list:
+            importer.fromUser(user, 200)
+
 

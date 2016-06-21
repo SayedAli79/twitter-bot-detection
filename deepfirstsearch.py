@@ -60,18 +60,18 @@ if args.crawl:
                 # try/except here to avoid protected followers to breack for loop
                 try:
                     # new list of followers to investigate
-                    crawl_followers = client.followers_ids(follower)
+                    crawled_followers = client.followers_ids(follower)
+
+                    # mark the node as visited (stack) 
+                    crawled_users.append(follower)
+                    # check weither new followers have already been investigated -> discard followers that are already investigated
+                    for crawled_follower in crawled_followers:
+                        if not crawled_follower in (crawled_users, followers_from_crawl):
+                            new_followers.append(crawled_follower) 
+                        else:
+                            pass
                 except tweepy.TweepError:
                     print("Failed to import followers from that user, Skipping...")
-                    crawl_followers = ['']
-                # mark the node as visited (stack) 
-                crawled_users.append(follower)
-                # check weither new followers have already been investigated -> discard followers that are already investigated
-                for crawled_follower in crawled_followers:
-                    if not crawled_follower in (crawled_users, followers_from_crawl):
-                        new_followers.append(crawled_follower) 
-                    else:
-                        pass
        # condition to end recursive function is depth == 0
        crawl_depth = crawl_depth - 1
        # check condition to end the recursive function 
@@ -85,10 +85,13 @@ if args.crawl:
        else:
            print(crawl_depth < 0, "ErrorValue: negative value for crawling depth!")          
 
-# ______ MAKE NEW FUNCTION __________________
+
 # import tweets from followers of each node
     def tweet_crawl(total_crawl_list):
         for user in total_crawl_list:
             importer.fromUser(user, 200)
 
+
+    total_crawl_list = follower_crawl(followers_from_crawl = followers_from_scan,crawled_users=crawled_users,crawl_depth=2)
+    tweet_crawl(total_crawl_list)
 

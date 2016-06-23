@@ -24,6 +24,7 @@ parser.add_argument('specified_user', action="store", help='load tweets from the
 parser.add_argument('--crawl', action="store_true", help="crawl through twitter users (starting by the user's followers) till a limit is reached")
 parser.add_argument('--create-db', action="store_true", help='create or drop the database if it already exists')
 parser.add_argument('--is-bot', action="store_true", help='the specified user will be flag as bot')
+parser.add_argument('--depth', choices=['1','2','3'], default = '1' ,help='choose the depth of crawling')
 
 args = parser.parse_args()
 
@@ -50,7 +51,7 @@ if args.crawl:
     followers_from_scan = client.followers_ids(args.specified_user)
 
 
-    def follower_crawl(followers_from_crawl,crawled_users,crawl_depth=1):
+    def follower_crawl(followers_from_crawl,crawled_users,crawl_depth):
         # init new nodes to investigate from node
         new_followers = []
         for follower in followers_from_crawl:
@@ -72,18 +73,18 @@ if args.crawl:
                             pass
                 except tweepy.TweepError:
                     print("Failed to import followers from that user, Skipping...")
-       # condition to end recursive function is depth == 0
-       crawl_depth = crawl_depth - 1
-       # check condition to end the recursive function 
-       if crawl_depth > 0:
-           print(crawl_depth > 0, "crawling through followers...")
-           return follower_crawl(new_followers,crawled_users,crawl_depth=crawl_depth)
-       elif crawl_depth == 0: 
-           print(crawl_depth == 0, "end of crawling procedure")  
-           total_crawl_list = crawled_users + new_followers
-           return (total_crawl_list)
-       else:
-           print(crawl_depth < 0, "ErrorValue: negative value for crawling depth!")          
+        # condition to end recursive function is depth == 0
+        crawl_depth = crawl_depth - 1
+        # check condition to end the recursive function 
+        if crawl_depth > 0:
+            print(crawl_depth > 0, "crawling through followers...")
+            return follower_crawl(new_followers,crawled_users,crawl_depth=crawl_depth)
+        elif crawl_depth == 0: 
+            print(crawl_depth == 0, "end of crawling procedure")  
+            total_crawl_list = crawled_users + new_followers
+            return (total_crawl_list)
+        else:
+            print(crawl_depth < 0, "ErrorValue: negative value for crawling depth!")          
 
 
 # import tweets from followers of each node
@@ -92,6 +93,7 @@ if args.crawl:
             importer.fromUser(user, 200)
 
 
-    total_crawl_list = follower_crawl(followers_from_crawl = followers_from_scan,crawled_users=crawled_users,crawl_depth=2)
+    total_crawl_list = follower_crawl(followers_from_crawl = followers_from_scan,crawled_users=crawled_users,crawl_depth=int(args.depth))
     tweet_crawl(total_crawl_list)
+
 

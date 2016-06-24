@@ -100,42 +100,41 @@ if os.path.isfile('reports/tweet_density_per_human.csv') == False or os.path.isf
         writer = csv.writer(f)
         for row in tweet_density_per_bot:
             writer.writerow([row])
-path ="{}/images/density.png".format(current_path)
-graph.hist_density(
-    tweet_density_per_human,
-    tweet_density_per_bot,
-    mean_count_user,
-    median_count_user,
-    mean_count_bot,
-    median_count_bot,
-    path
-)
+    path ="{}/images/density.png".format(current_path)
+    graph.hist_density(
+        tweet_density_per_human,
+        tweet_density_per_bot,
+        mean_count_user,
+        median_count_user,
+        mean_count_bot,
+        median_count_bot,
+        path
+    ) 
 
 
 # number of tweets per week days
 if os.path.isfile('reports/tweet_weekday_human.csv') == False or os.path.isfile('reports/tweet_weekday_bot.csv') == False:
     tweet_weekday_human = Tweet.tweet_weekday(human_tweets)
     tweet_weekday_bot = Tweet.tweet_weekday(bot_tweets)
-    with open('reports/tweet_weekday_human.csv', 'wb') as f:
-        writer = csv.writer(f, delimiter = ',')
-        for row in tweet_weekday_human:
-            writer.writerow([row])
-    with open('reports/tweet_weekday_bot.csv', 'wb') as f:
-        writer = csv.writer(f)
-        for row in tweet_weekday_bot:
-            writer.writerow([row])
-path ="{}/images/weekdays.png".format(current_path)
-graph.hist_weekday(
-    Tweet.tweet_weekday(human_tweets),
-    Tweet.tweet_weekday(bot_tweets),
-    path
-)
+    tweet_weekday_human.to_csv('reports/tweet_weekday_human.csv', sep=',')
+    tweet_weekday_bot.to_csv('reports/tweet_weekday_bot.csv', sep=',')
+    path ="{}/images/weekdays.png".format(current_path)
+    graph.hist_weekday(
+        Tweet.tweet_weekday(human_tweets),
+        Tweet.tweet_weekday(bot_tweets),
+        path
+    )
 
 # Nb followers/following
-path ="{}/images/followers_following.png".format(current_path)
-graph.Nb_followers_following(
-User.followers_friends_per_users(human_users),
-User.followers_friends_per_users(bot_users),
-    path
-)
+if os.path.isfile('reports/followers_friends_human.csv') == False or os.path.isfile('reports/followers_friends_bot.csv') == False:
+    followers_friends_human = User.followers_friends_per_users(human_users)
+    followers_friends_bot = User.followers_friends_per_users(bot_users)
+    followers_friends_human.to_csv('reports/followers_friends_human.csv', sep=',')
+    followers_friends_bot.to_csv('reports/followers_friends_bot.csv', sep=',')
+    path ="{}/images/followers_following.png".format(current_path)
+    graph.Nb_followers_following(
+        followers_friends_human,
+        followers_friends_bot,
+        path
+    )
 

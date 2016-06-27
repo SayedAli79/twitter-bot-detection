@@ -54,4 +54,48 @@ class TweetImporter(object):
         for j, follower in enumerate(followers):
             self.fromUser(follower, tweets_number)
 
+    def follower_crawl(self,followers_from_crawl,crawled_users,crawl_depth):
+        # init new nodes to investigate from node
+        new_followers = []
+        for follower in followers_from_crawl:
+            if follower in crawled_users:
+                 pass
+            else:
+                # try/except here to avoid protected followers to breack for loop
+                try:
+                    # new list of followers to investigate
+                    crawled_followers = self.twitter_client.followers_ids(follower)
+
+                    # mark the node as visited (stack) 
+                    crawled_users.append(follower)
+                    # check weither new followers have already been investigated -> discard followers that are already investigated
+                    for crawled_follower in crawled_followers:
+                        if not crawled_follower in (crawled_users, followers_from_crawl):
+                            new_followers.append(crawled_follower) 
+                        else:
+                            pass
+                except tweepy.TweepError:
+                    print("Failed to import followers from {}, Skipping...").format(crawled_follower)
+        # condition to end recursive function is depth == 0
+        crawl_depth = crawl_depth - 1
+        # check condition to end the recursive function 
+        if crawl_depth > 0:
+            print(crawl_depth > 0, "crawling through followers...")
+            return follower_crawl(new_followers,crawled_users,crawl_depth)
+        elif crawl_depth == 0: 
+            print(crawl_depth == 0, "end of crawling procedure")  
+            total_crawl_list = crawled_users + new_followers
+            return (total_crawl_list)
+        else:
+            print(crawl_depth < 0, "ErrorValue: negative value for crawling depth!")          
+
+
+# import tweets from followers of each node
+    def tweet_crawl(self,total_crawl_list):
+        for user in total_crawl_list:
+            try:
+                self.fromUser(user, 200)
+            except tweepy.TweepError:
+                print("Failed to import tweets from {}, Skipping...").format(user)
+        print("end of tweets importation")
 
